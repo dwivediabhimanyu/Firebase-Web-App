@@ -1,0 +1,118 @@
+<html>
+<head>
+  <title>Send Invites</title>
+  <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+
+  <div id="user_div" class="loggedin-div">
+    <h3>Welcome User</h3>
+    <p id="user_para">Welcome to Firebase web login Example. You're currently logged in.</p>
+    <button id="verfication-btn" onclick="send_verification()">Send email verification</button> <br>
+    <div id="invite" class="main-div" style="width: 100%;padding: 0px;margin:0px;">
+        <p>Fill the form below to invite-</p>
+    <input type="email" placeholder="Enter recipient email address.." id="email_field" />
+    <input type="textarea" style="height: 200px;overflow: Scroll;" value="Hi friend, Check out this cool website called #SendInvites. You can you it to send invitation emails to anyone with a click. Sign up at: https://weblogin-c40d4.firebaseapp.com/ to enjoy this service for free." id="text_field" />
+    <button onclick="send_email()">Send</button> <br>
+    </div>
+    <button onclick="logout()"  style="background-color:#c62828;border: 1px solid #c62828;"     >Logout</button>
+  </div>
+  <div id="snackbar"> </div>
+  <div class="footer">
+        <p>Made by <a href="https://github.com/dwivediabhimanyu" >Abhimanyu Dwivedi</a></p>
+      </div>
+  <script src="https://www.gstatic.com/firebasejs/4.8.1/firebase.js"></script>
+  <script src="https://smtpjs.com/v3/smtp.js"> </script>
+  <script>
+    // Initialize Firebase
+    const config = {
+  apiKey: "AIzaSyAYD-GC_K-2wpPSuA5AMxikqCIkHSPxEy0",
+  authDomain: "weblogin-c40d4.firebaseapp.com",
+  databaseURL: "https://weblogin-c40d4.firebaseio.com",
+  projectId: "weblogin-c40d4",
+  storageBucket: "weblogin-c40d4.appspot.com",
+  messagingSenderId: "46248729898",
+  appId: "1:46248729898:web:5615469512ef2522"
+};
+    firebase.initializeApp(config);
+  </script>
+  <script src="index.js"></script>
+<script>
+  
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      // User is signed in.
+  
+      var user = firebase.auth().currentUser;
+  
+      if(user != null){
+  
+        var email_id = user.email;
+        var email_verfied = user.emailVerified;
+        if (email_verfied) {
+            document.getElementById("verfication-btn").disabled = true;
+            document.getElementById("verfication-btn").style.display = "none";
+            document.getElementById("invite").style.display = "block";
+            var verficationStatus = 'Verfied';
+        }
+        else {
+            document.getElementById("verfication-btn").disabled = false;
+            document.getElementById("verfication-btn").style.display = "block"; 
+            document.getElementById("invite").style.display = "none";
+            var verficationStatus = 'Not Verfied';
+        }
+        document.getElementById("user_para").innerHTML = "Welcome: " + email_id + "<br>Account Status:"+verficationStatus;
+  
+      }
+  
+    } else {
+            window.location.href = "https://weblogin-c40d4.firebaseapp.com/";
+    }
+  });
+
+ function send_verification() {
+    var user = firebase.auth().currentUser;
+
+user.sendEmailVerification().then(function() {
+  // Email sent.
+      var x = document.getElementById("snackbar");
+      x.className = "show";
+      x.innerHTML += "Woh! Verification Email Sent. Incase email was not recieved in your inbox, please check spam folder.";
+      setTimeout(function(){ x.className = x.className.replace("show", "");document.getElementById("snackbar").innerHTML = ""; }, 3000);
+}).catch(function(error) {
+  // An error happened.
+      var x = document.getElementById("snackbar");
+      x.className = "show";
+      x.innerHTML += errorMessage;
+      setTimeout(function(){ x.className = x.className.replace("show", "");document.getElementById("snackbar").innerHTML = ""; }, 3000);
+      
+});
+ }
+</script>
+<script>
+function send_email() {
+    var recipientEmail = document.getElementById("email_field").value;
+    var bodyEmail = document.getElementById("text_field").value;
+    Email.send({
+    Host : "smtp.elasticemail.com",
+    Username : "abhidube003@gmail.com",
+    Password : "12fcc621-ecc6-44bc-bcb7-5cfd9d5c5709",
+    To : recipientEmail,
+    From : "abhidube003@gmail.com",
+    Subject : "Invitation",
+    Body : "Note:" + bodyEmail + " Accept invitation by Signing up at - https://weblogin-c40d4.firebaseapp.com/ "
+}).then(
+  message => {
+    var x = document.getElementById("snackbar");
+      x.className = "show";
+      x.innerHTML += "Your invitation was sent.";
+      setTimeout(function(){ x.className = x.className.replace("show", "");document.getElementById("snackbar").innerHTML = ""; }, 3000);
+  }
+);
+}
+</script>
+</body>
+</html>
