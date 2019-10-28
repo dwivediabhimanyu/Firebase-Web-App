@@ -15,7 +15,7 @@
       setTimeout(function(){ x.className = x.className.replace("show", "");document.getElementById("snackbar").innerHTML = ""; }, 3000);
       // ...
     });
-  
+  //index.js
   }
   
   function logout(){
